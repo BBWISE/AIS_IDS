@@ -14,11 +14,17 @@ public class SinkServer extends Thread {
 	   public void run() {
 	      while(true) {
 	         try {
+	        	
 	            Socket server = serverSocket.accept();
 	            
 	            DataInputStream in = new DataInputStream(server.getInputStream());
 	            
 	            boolean modelResult = false;
+	            
+	            System.out.println("1========"+in.available()); // Returns an estimate of the number of bytes that can be read (orskipped over)
+	            
+	            System.out.println("3========"+in.readByte()); //See the general contract of the readBytemethod of DataInput. Bytesfor this operation are read from the containedinput stream
+	            
 	            
 	            
 	            String localAddress = server.getLocalAddress().toString(); // Gets the local address to which the socket is bound.
@@ -28,10 +34,12 @@ public class SinkServer extends Thread {
 	            int sendBufferSize = server.getSendBufferSize(); // Get value of the SO_SNDBUF option for this Socket, that is the buffer size used by the platform for output on this Socket.
 	            int typeOfService = server.getTrafficClass(); // Gets traffic class or type-of-service in the IP header for packets sent from this Socket
 	            
+	            System.out.println(server.getRemoteSocketAddress());
+
 	            
+	            //String protocol = protocol(in.readByte());
 	            
-	            
-	            System.out.println(localAddress+" "+keepAlive+" "+receiveBufferSize+" "+sendBufferSize+" "+typeOfService);
+	            System.out.println(localAddress+" "+keepAlive+" "+receiveBufferSize+" "+sendBufferSize+" "+typeOfService);//+" "+protocol);
 	            
 	            /*
 	            'duration' 'protocol_type'	'service'	'flag'	'src_bytes'	'dst_bytes'	'land'	'wrong_fragment'
@@ -72,4 +80,17 @@ public class SinkServer extends Thread {
 	         }
 	      }
 	   }
+	   private String protocol(byte readByte) {
+		   System.out.println("llllllll  "+ readByte);
+           if (readByte == (byte) 0x06) {
+        	   return "TCP";
+           } else if (readByte == (byte) 0x11) {
+        	   return "UDP";
+           } else if (readByte == (byte) 0x01) {
+               return "ICMP";
+           } else {
+        	   return "Unknown";
+           }
+	   }
+	   
 }

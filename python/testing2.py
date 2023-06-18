@@ -5,7 +5,8 @@ import csv
 import sqlite3
 import struct
 individualSize=8
-populationSize=100
+#individualSize=6
+populationSize=1000
 mutation_rate = 1
 #delete=[]
 population = [];
@@ -54,7 +55,8 @@ def float_to_bin(f):
     return s[:-1].lstrip('0') + s[0] # strip all leading zeros except for last
 
 def get_num(x):
-         return float(''.join(ele for ele in x if ele.isdigit() or ele == '.'))       
+         return float(''.join(ele for ele in x if ele.isdigit() or ele == '.'))
+         #return float(''.join(ele for ele in range(x) if ele.isdigit() or ele == '.'))       
 
 #----------------------euclidean distance------------------------------------
 
@@ -80,7 +82,7 @@ def crossover(individual):
            if start > end:
              start, end = end, start
             # print("\nparent1",parent1)
-            #  print("parent2",parent2)
+            # print("parent2",parent2)
              child1 = parent1[:start] + parent2[start:end] + parent1[end:]
              child2 = parent2[:start] + parent1[start:end] + parent2[end:]
 #----------------------mutation on cross over child-----------------
@@ -100,8 +102,9 @@ def crossover(individual):
              child_pop.append(child1)#child population not final population
              child_pop.append(child2)
            x = x+1       
-    #  print("child_pop",*child_pop,sep='\n')#only after child-pop.append
+      # print("child_pop",*child_pop,sep='\n')#only after child-pop.append
     #  print("population",*population,sep='\n')#actual final population as the result of genetic algorithm
+      
       return population  
 #-----------------------------------------------------------------------------------------------------------
 
@@ -152,7 +155,7 @@ def mutation(child):
   return mutatedCh
 
 #----------------------euclidean distance------------------------------------
-def euclidean_distance(x,y):         
+def euclidean_distance(x,y):
      return sqrt(sum(pow(float(get_num(a)-get_num(b)),2) for a, b in zip(x, y)))
 #print("\neuclidean_distance",euclidean_distance(parent1,parent2))   
 
@@ -160,9 +163,9 @@ def euclidean_distance(x,y):
 #-----------------------------------------------------------------------------------------------------------
 def compare_append(parentpopulation,childpopulation):
    eucliDist=euclidean_distance(parentpopulation,childpopulation)
-  # print("euclidean_distance parent&child",eucliDist)
-  # print("fitness(child)",fitness(childpopulation))
-  # print("fitness(parent)",fitness(parentpopulation))
+   # print("euclidean_distance parent&child",eucliDist)
+   # print("fitness(child)",fitness(childpopulation))
+   # print("fitness(parent)",fitness(parentpopulation))
    if eucliDist > rs and fitness(childpopulation) > fitness(parentpopulation) :
    #   print("success")
       #if 
@@ -189,7 +192,8 @@ def dist_nearest_self(individualpopulation):
 
    #I'm working on this very function. ============================================================== BBWiSE
    #data = open('only nameof feature.csv', "r")
-   data = open('C:\\Users\\BBWiSE\\eclipse-workspace\\jse\\AIS_IDS\\python\\dataset\\KDDTrain+_.csv', "r")
+   data = open('C:\\Users\\BBWiSE\\eclipse-workspace\\jse\\AIS_IDS\\python\\dataset\\dataset_used\\KDDTrain+_.csv', "r")
+   #data = open('C:\\Users\\BBWiSE\\eclipse-workspace\\jse\\AIS_IDS\\python\\dataset\\TestBook.csv', "r")
    reader = csv.reader(data)
    conn = sqlite3.connect(':memory:')
    c = conn.cursor()
@@ -197,41 +201,53 @@ def dist_nearest_self(individualpopulation):
    c.row_factory = sqlite3.Row
    j.row_factory = sqlite3.Row
    c.execute("create table FeatureTable ( source_bytes text,service text,destination_bytes text,flag text,diff_srv_rate text,same_srv_rate text,dst_host_srv_count text,dst_host_same_srv_rate text)")
+   # c.execute("create table FeatureTable (protocol,service,dst_bytes,is_guest_login,dst_host_count,dst_host_same_src_port_rate)");
    conn.commit()
    
    i_ =1
    for e in reader:
-      test= []     
-      # test.append(e[0])  
-      # test.append(e[1])
-      # test.append(e[2])
-      # test.append(e[3])
-      # test.append(e[4])
-      # test.append(e[5])
-      # test.append(e[6])
-      # test.append(e[7])
-      #
-      
-      print(i_)
-      i_ +=1
-      
-      test.append(bin_to_float(stringToBinary(e[0])))   #stringToBinary(e[0])
-      test.append(bin_to_float(stringToBinary(e[1])))
-      test.append(bin_to_float(stringToBinary(e[2])))
-      test.append(bin_to_float(stringToBinary(e[3])))
-      test.append(e[4])
-      test.append(e[5])
-      test.append(bin_to_float(stringToBinary(e[6])))
-      test.append(e[7])
-      
-      # print(e[0]," ```` ",e[1]," ```` ",e[2]," ```` ",e[3]," ```` ",e[4]," ```` ",e[5]," ```` ",e[6]," ```` ",e[7])
-      # print(stringToBinary(e[0])," **** ",stringToBinary(e[1])," **** ",stringToBinary(e[2])," **** ",stringToBinary(e[3])," **** ",stringToBinary(e[4])," **** ",stringToBinary(e[5])," **** ",stringToBinary(e[6])," **** ",stringToBinary(e[7]))
-      print(bin_to_float(stringToBinary(e[0])), "==", bin_to_float(stringToBinary(e[1])),"==", bin_to_float(stringToBinary(e[2])),"==", bin_to_float(stringToBinary(e[3])),"==", e[4],"==", e[5],"==", bin_to_float(stringToBinary(e[6])),"==", e[7])
-      c.execute("insert into FeatureTable values (?,?,?,?,?,?,?,?)", test)
-      
+      if(i_<=11001):
+          
+          test= []     
+          # test.append(e[0])  
+          # test.append(e[1])
+          # test.append(e[2])
+          # test.append(e[3])
+          # test.append(e[4])
+          # test.append(e[5])
+          # test.append(e[6])
+          # test.append(e[7])
+          #
+          
+          print(i_)
+          i_ +=1
+          
+          # test.append(bin_to_float(stringToBinary(e[0])))
+          # test.append(bin_to_float(stringToBinary(e[1])))
+          # test.append(bin_to_float(stringToBinary(e[2])))
+          # test.append(bin_to_float(stringToBinary(e[3])))
+          # test.append(e[4])
+          # test.append(e[5])
+          # test.append(bin_to_float(stringToBinary(e[6])))
+          # test.append(e[7])
+          
+          test.append(bin_to_float(stringToBinary(e[4]))) # source_bytes
+          test.append(bin_to_float(stringToBinary(e[2]))) # service
+          test.append(bin_to_float(stringToBinary(e[5]))) # dst_bytes
+          test.append(bin_to_float(stringToBinary(e[3]))) # flag
+          test.append(e[29]) # diff_srv_rate
+          test.append(e[28]) # same_srv_rate
+          test.append(bin_to_float(stringToBinary(e[32]))) # dst_host_srv_count
+          test.append(e[33]) # dst_host_same_srv_rate
+          
+          c.execute("insert into FeatureTable values (?,?,?,?,?,?,?,?)", test)
+          #c.execute("insert into FeatureTable values (?,?,?,?,?,?)", test)
+      else:
+          break
 #print (test)
    conn.commit()
    sql = "SELECT source_bytes,service, destination_bytes, flag,diff_srv_rate, same_srv_rate, dst_host_srv_count, dst_host_same_srv_rate  FROM FeatureTable "
+   # sql = "SELECT protocol,service,dst_bytes,is_guest_login,dst_host_count,dst_host_same_src_port_rate FROM FeatureTable"
    j.execute(sql)
    del euclinormal[:]
    for row in j:
@@ -260,7 +276,7 @@ detectors=crossover(population)
 
 #======================== WRITTING THE DATA INTO A CSV FILE ======================================================= BBWiSE
 import csv
-with open('detectors.csv', 'w', newline='') as f:
+with open('C:\\Users\\BBWiSE\\eclipse-workspace\\jse\\AIS_IDS\\python\\dataset\\detector_used\\detectors_11000.csv', 'w', newline='') as f:
     writer = csv.writer(f)
     writer.writerows(detectors)
 

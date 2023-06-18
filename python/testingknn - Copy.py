@@ -1,14 +1,10 @@
 detectors=[]
 import csv,struct
 
-with open('detectors.csv', 'r') as f:
+with open('C:\\Users\\BBWiSE\\eclipse-workspace\\jse\\AIS_IDS\\python\\dataset\\detector_used\\detectors_11000.csv', 'r') as f:
     reader = csv.reader(f)
     for row in reader:
-           # print ("",row)
             detectors.append(row)
-
-        
-#print("\n",detectors)
 
 
 # =======================================================================================================
@@ -81,45 +77,15 @@ def euclideanDistance1(instance1,instance2):
 
 
 def testing(knnDistance):
-   #if knnDistance < .90 :
-   if knnDistance < .80 :
-      result='attack'
+   if knnDistance < .70 :
+      #result='attack'
+      result=1
       print("attack")
    else:
-      result='normal'     
+      result=0
+      #result='normal'     
       print("normal")
    return result
-
-
-###-----------------------------------------------
-
-# result=[]
-# testInstance=[]
-#
-# with open('testinst.csv', 'r') as f:
-# #with open('C:\\Users\BBWiSE\\Documents\\Projects\Development of an Artificial Immun System-based Network Intrusion Detectioin System Using Negative and Positive Selection\\python\\TestBook.csv', 'r') as f:
-#     reader = csv.reader(f)
-#     for row in reader:
-#             print ("",row)
-#             testInstance.append(row)
-#print(len(testInstance))
-# for i in range(len(testInstance)):
-#         #print(type(testInstance[i]))
-#         neighbors = getNeighbors(detectors, testInstance[i], 1)
-#         print("testInstance[i]",*testInstance[i], sep=',')
-#         knnDistance=euclideanDistance1(neighbors[0],testInstance[i])
-#         print("\n knnDistance",knnDistance)
-#         result.append(testing(knnDistance))
-#
-
-
-
-
-
-
-
-
-
 
 
 # =================================================================
@@ -129,40 +95,57 @@ def testing(knnDistance):
 result=[]
 testInstance=[]
 
-with open('C:\\Users\\BBWiSE\\eclipse-workspace\\jse\\AIS_IDS\\python\\Book2.csv', 'r') as f:
-#with open('C:\\Users\BBWiSE\\Documents\\Projects\Development of an Artificial Immun System-based Network Intrusion Detectioin System Using Negative and Positive Selection\\python\\TestBook.csv', 'r') as f:
+attackNames =['normal', 'mscan', 'guess_passwd', 'snmpgetattack', 'processtable', 'snmpguess', 'ipsweep', 'mailbomb']
+
+with open('C:\\Users\\BBWiSE\\eclipse-workspace\\jse\\AIS_IDS\\python\\dataset\\dataset_used\\'+attackNames[7]+'.csv', 'r') as f:
     reader = csv.reader(f)
     for row in reader:
             #print ("",row)
             testInstance.append(row)
-for i in range(len(testInstance)):
-        #print(type(testInstance[i]))
+outcome = [];
+ii =1;
+for e in testInstance:
         testInstance_ = [] #    bin_to_float(stringToBinary(
         
-        testInstance_.append(bin_to_float(stringToBinary(testInstance[i][0])))
-        testInstance_.append(bin_to_float(stringToBinary(testInstance[i][1])))
-        testInstance_.append(bin_to_float(stringToBinary(testInstance[i][2])))
-        testInstance_.append(bin_to_float(stringToBinary(testInstance[i][3])))
-        testInstance_.append(testInstance[i][4])
-        testInstance_.append(testInstance[i][5])
-        testInstance_.append(bin_to_float(stringToBinary(testInstance[i][6])))
-        testInstance_.append(testInstance[i][7])
+        print(ii)
+        ii +=1
+        
+        testInstance_.append(bin_to_float(stringToBinary(e[0]))) # source_bytes
+        testInstance_.append(bin_to_float(stringToBinary(e[1]))) # service
+        testInstance_.append(bin_to_float(stringToBinary(e[2]))) # dst_bytes
+        testInstance_.append(bin_to_float(stringToBinary(e[3]))) # flag
+        testInstance_.append(e[4]) # diff_srv_rate
+        testInstance_.append(e[5]) # same_srv_rate
+        testInstance_.append(bin_to_float(stringToBinary(e[6]))) # dst_host_srv_count
+        testInstance_.append(e[7]) # dst_host_same_srv_rate
+        
+        outcome.append(int(e[8]))
         
         print("\n",testInstance_)
         
         neighbors = getNeighbors(detectors, testInstance_, 1)
-        #print("testInstance["+i+"]",*testInstance[i], sep=',')
         knnDistance=euclideanDistance1(neighbors[0],testInstance_)
         print(" knnDistance",knnDistance)
         result.append(testing(knnDistance))
+        
 # =================================================================
 # =================================================================
 # =================================================================
 # =================================================================
 
+#print("\n",*result,sep='\n')
+print("result lenght:",len(result))
+print("outcome lenght:",len(outcome))
+print("The length of the datapoint is: ",len(result))
+
+print("\n\n\n\n")
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
+import  numpy as np
+
+print("confusion metrics:",confusion_matrix(outcome, result))
+print("accuracy:", accuracy_score(outcome, result))
+print("precision:", precision_score(outcome, result, average='weighted', labels=np.unique(outcome)))
+print("recall:", recall_score(outcome, result, average='weighted', labels=np.unique(outcome)))
+print("f1 score:", f1_score(outcome, result, average='weighted', labels=np.unique(outcome)))
 
 
-
-
-
-print("\n",*result,sep='\n')
